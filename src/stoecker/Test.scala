@@ -10,7 +10,6 @@ object Test {
 
   // TODO clean up test cases/unit tests
   def main(args: Array[String]) {
-
     generateGraph()
     testIDDFS()
     testContains()
@@ -77,14 +76,6 @@ object Test {
       println("Found " + testString + " at " + result.toString)
     else
       println("Did not find " + testString)
-
-    // Should return a reference to node containing "C" and display progressively deeper search patterns as follows:
-    //
-    result = testGraph.iddfs(null, testString)
-    if (result != null)
-      println("Found " + testString + " at " + result.toString)
-    else
-      println("Did not find " + testString)
   }
 
   def testContains() = {
@@ -108,8 +99,6 @@ object Test {
     testString = "D"
     println("Graph contains " + testString + " : " + testGraph.contains(testString))
     testGraph.addNode(testNode2)
-    println("Graph contains " + testString + " : " + testGraph.contains(testString))
-    println("Graph contains " + testString + " : " + testGraph.contains(testString))
     println("Graph contains " + testString + " : " + testGraph.contains(testString))
   }
 
