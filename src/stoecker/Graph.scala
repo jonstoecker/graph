@@ -21,7 +21,6 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    * @param node node to add the graph
    */
   def addNode(node: Node[E]) {
-
     // TODO add proper case handling for nodes with pre-existing edges
     // 1.) Check for adjacent nodes
     // If true:
@@ -97,44 +96,87 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
   def avgDegree = 2 * numEdges / nodes.size
 
   /**
-   * Accessor for the set of all nodes in the graph
-   * @return set of all nodes in the graph
-   */
-  def getNodes = nodes
-
-  /**
-   * Searches the graph for a specified data value; uses a depth-first algorithm by default
-   * Running time: as DFS, O(|Edges|)
+   * Searches for a specified data value (currently iterative)
+   * Running time: O(n)
    * @param target data point to search for within the graph
-   * @return reference to the node containing; null if non-existent
+   * @return collection containing the appropriate node(s)
    */
-  // TODO replace with iterative deepening depth-first search
-  def find(target: E): Node[E] = dfs(nodes.head, target)
+  // TODO evaluate an ordered and sorted set for binary search
+  def contains(target: E) = nodes.find((node: Node[E]) => node.data.equals(target))
 
   /**
-   * Searches the graph for a specified data value; depth-first algorithm
+   * Recursive step of the DFS/IDDFS
+   * @param n current node
+   * @param target value to search for
+   * @param depth current depth
+   * @param maxDepth maximum depth (for iterative deepening DFS)
+   * @param visited hash of visited nodes for cycle detection
+   * @param isIterativeDeepening flag for identifying IDDFS
+   * @return reference to containing node; null if not found
+   */
+  private def dfs(n: Node[E], target: E, depth: Int, maxDepth: Int,
+                  visited: mutable.HashSet[Node[E]], isIterativeDeepening: Boolean): Node[E] = {
+    if (DEBUG) println("Visiting " + n.data + " at " + n.toString + " with depth " + depth + " and max depth " + maxDepth)
+    visited.add(n)
+
+    if (n.data.equals(target)) return n
+    if (isIterativeDeepening && depth == maxDepth) return null
+
+    var result: Node[E] = null
+    for (node <- n.adjacent if result == null && !visited.contains(node)) {
+      result = dfs(node, target, depth + 1, maxDepth, visited, isIterativeDeepening)
+    }
+    result
+  }
+
+  /**
+   * Searches the graph for a specified data value; depth-first algorithm; random starting point
    * Running time: O(|Edges|)
-   * @param n starting point (node/vertex) for the search
    * @param target data point to locate within the graph
    * @return reference to containing node; null if not found
    */
-  def dfs(n: Node[E], target: E): Node[E] = {
-    // Recursive step
-    def dfs(n: Node[E], target: E, visited: mutable.HashSet[Node[E]]): Node[E] = {
-      if (DEBUG) println("Visiting " + n.data + " at " + n.toString)
-      visited.add(n)
-      var result: Node[E] = null
+  def dfs(target: E): Node[E] = dfs(nodes.head, target)
 
-      if (n.data.equals(target)) return n
+  /**
+   * Searches the graph for a specified data value; depth-first algorithm; user-provided starting point
+   * @param start starting point
+   * @param target data point to locate within the graph
+   * @return reference to containing node; null if not found
+   */
+  def dfs(start: Node[E], target: E): Node[E] = dfs(start, target, 0, 0,
+    new mutable.HashSet[Node[E]], isIterativeDeepening = false)
 
-      for (node <- n.adjacent if !visited.contains(node) && result == null) {
-        result = dfs(node, target, visited)
-      }
+  /**
+   * Iterative deepening depth-first search
+   * @param n starting node
+   * @param target value to search for
+   * @return reference to the containing node; null if not found
+   */
+  def iddfs(n: Node[E], target: E): Node[E] = {
+    def recurse(maxDepth: Int): Node[E] = {
+      val visited = new mutable.HashSet[Node[E]]
+      val result = dfs(n, target, 0, maxDepth, visited, isIterativeDeepening = true)
+      if (result == null) println("result is null")
+      else println(result.toString)
+      // TODO address discontinuous component case for terminating iterative deepening search
+      // TODO convert to tail recursion or iteration
+      // Current continuation conditions:
+      // * result is null (i.e. haven't found target yet)
+      // * visited hash does not match current graph set (i.e. haven't traversed the entire graph yet) --
+      // temporary solution given possibility of discrete graph components
+      // * depth is arbitrarily limited to signed int maximum (i.e. 2^31 - 1)
+      if (result == null && visited.size < nodes.size && maxDepth < Integer.MAX_VALUE) recurse(maxDepth + 1)
       result
     }
-
-    dfs(n, target, new mutable.HashSet[Node[E]])
+    recurse(maxDepth = 0)
   }
+
+  /**
+   * Iterative deepening depth-first search; random start position
+   * @param target value to search for
+   * @return reference to containing node; null if not found
+   */
+  def iddfs(target: E): Node[E] = iddfs(nodes.head, target)
 
   /**
    * Searches the graph for a specified data value; breadth-first algorithm
@@ -163,6 +205,14 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
     }
     null
   }
+
+  /**
+   * Searches the graph for a specified data value; breadth-first algorithm; random starting point
+   * Running time: O(|Edges|)
+   * @param target data point to locate within the graph
+   * @return reference to containing node; null if not found
+   */
+  def bfs(target: E): Node[E] = bfs(nodes.head, target)
 
   /**
    * Generates a string representation of the graph
