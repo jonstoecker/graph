@@ -57,8 +57,6 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    */
   def removeEdge(n: Node[E], m: Node[E]) {
     // TODO replace assumed undirected graph with digraph functionality
-    if (nodes.remove(n)) numEdges -= 1
-    if (nodes.remove(m)) numEdges -= 1
   }
 
   /**
