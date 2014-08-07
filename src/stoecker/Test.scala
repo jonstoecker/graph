@@ -6,16 +6,16 @@ package stoecker
  */
 object Test {
 
-  val testGraph: Graph[String] = new Graph[String]
-
   // TODO clean up test cases/unit tests
   def main(args: Array[String]) {
-    generateGraph()
-    testIDDFS()
-    testContains()
+    testNode()
+    testAddNodeAndEdge()
+//    testIDDFS()
+//    testContains()
   }
 
-  def generateGraph() = {
+  def generateGraph(): Graph[String] = {
+    val testGraph: Graph[String] = new Graph[String]
     val nodeA = new Node[String]("A")
     val nodeB = new Node[String]("B")
     val nodeC = new Node[String]("C")
@@ -24,16 +24,38 @@ object Test {
     testGraph.addNode(nodeC)
     testGraph.addEdge(nodeA, nodeB)
     testGraph.addEdge(nodeA, nodeC)
+
+    testGraph
   }
 
   /*
-  Adding a node to an existing graph
+  Adding a node to an existing graph; testing "vertices" and "edges" accessors
    */
-  def testAddNode() = {
-    println("Edges : " + testGraph.edges)
-    println("Vertices : " + testGraph.vertices)
-    println("Edges : " + testGraph.edges)
-    println("Vertices : " + testGraph.vertices)
+  def testAddNodeAndEdge() = {
+
+    val testGraph: Graph[String] = new Graph[String]
+
+    println("Testing AddNode\n--")
+    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println("Adding A")
+    val nodeA = new Node[String]("A")
+    testGraph.addNode(nodeA)
+    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println("Adding B")
+    val nodeB = new Node[String]("B")
+    testGraph.addNode(nodeB)
+    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println("Adding C")
+    val nodeC = new Node[String]("C")
+    testGraph.addNode(nodeC)
+    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+
+    println("Adding edge from A to B")
+    testGraph.addEdge(nodeA, nodeB)
+    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println("Adding edge from A to C")
+    testGraph.addEdge(nodeA, nodeC)
+    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
   }
 
   /*
@@ -42,10 +64,18 @@ object Test {
   def testNode() = {
     val testNode = new Node[String]("TestNode")
 
-    // Should show "-1" (default value for a node id)
+    // Expected result: "-1" (default value for a node id)
     println(testNode.toString + " id : " + testNode.id)
 
-    // Should show "TestNode"
+    // Expected result: "2"
+    testNode.id = 2
+    println(testNode.toString + " id : " + testNode.id)
+
+    // Expected result: "TestNode"
+    println(testNode.toString + " data: " + testNode.data)
+
+    // Expected result: "TestNodeChanged"
+    testNode.data = "TestNodeChanged"
     println(testNode.toString + " data: " + testNode.data)
   }
 
@@ -68,10 +98,20 @@ object Test {
    */
   def testIDDFS() = {
 
+    val testGraph = generateGraph()
+
     // Should return a reference to nodeC
-    val testString: String = "C"
+    var testString: String = "C"
     println("Looking for " + testString)
     var result = testGraph.iddfs(testString)
+    if (result != null)
+      println("Found " + testString + " at " + result.toString)
+    else
+      println("Did not find " + testString)
+
+    // Should return null
+    testString = "D"
+    result = testGraph.iddfs(testString)
     if (result != null)
       println("Found " + testString + " at " + result.toString)
     else
@@ -79,6 +119,8 @@ object Test {
   }
 
   def testContains() = {
+
+    val testGraph = generateGraph()
 
     // Case 1: single known value; should be "some" + reference
     var testString = new String("C")
