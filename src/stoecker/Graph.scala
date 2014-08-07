@@ -151,22 +151,15 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    * @return reference to the containing node; null if not found
    */
   def iddfs(n: Node[E], target: E): Node[E] = {
-    def recurse(maxDepth: Int): Node[E] = {
+    def deepeningSearch(maxDepth: Int): Node[E] = {
       val visited = new mutable.HashSet[Node[E]]
       val result = dfs(n, target, 0, maxDepth, visited, isIterativeDeepening = true)
-      if (result == null) println("result is null")
-      else println(result.toString)
       // TODO address discontinuous component case for terminating iterative deepening search
-      // TODO convert to tail recursion or iteration
-      // Current continuation conditions:
-      // * result is null (i.e. haven't found target yet)
-      // * visited hash does not match current graph set (i.e. haven't traversed the entire graph yet) --
-      // temporary solution given possibility of discrete graph components
-      // * depth is arbitrarily limited to signed int maximum (i.e. 2^31 - 1)
-      if (result == null && visited.size < nodes.size && maxDepth < Integer.MAX_VALUE) recurse(maxDepth + 1)
+      // depth is arbitrarily limited to signed int maximum (i.e. 2^31 - 1)
+      if (result == null && visited.size < nodes.size && maxDepth < Integer.MAX_VALUE) return deepeningSearch(maxDepth + 1)
       result
     }
-    recurse(maxDepth = 0)
+    deepeningSearch(maxDepth = 0)
   }
 
   /**
