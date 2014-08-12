@@ -37,15 +37,15 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
   /**
    * Adds a two-way edge to the graph between the two specified nodes
    * Currently undirected
-   * @param n "from" node
-   * @param m "to" node
+   * @param from "from" node
+   * @param to "to" node
    */
-  def addEdge(n: Node[E], m: Node[E]) {
+  def addEdge(from: Node[E], to: Node[E]) {
     // TODO replace assumed undirected graph with digraph functionality
-    nodes.add(n)
-    nodes.add(m)
-    n.adjacent.append(m)
-    m.adjacent.append(n)
+    nodes.add(from)
+    nodes.add(to)
+    from.adjacent.append(to)
+    to.adjacent.append(from)
     numEdges += 2
   }
 
