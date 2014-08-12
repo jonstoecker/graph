@@ -13,7 +13,8 @@ object Test {
 //    testIDDFS()
 //    testContains()
 //    testRemoveEdge()
-    testToString()
+//    testToString()
+    testFindPath()
   }
 
   def generateGraph(): Graph[String] = {
@@ -182,6 +183,19 @@ object Test {
     println("Graph contains " + testString + " : " + testGraph.contains(testString))
     testGraph.addNode(testNode2)
     println("Graph contains " + testString + " : " + testGraph.contains(testString))
+  }
+
+  def testFindPath() = {
+    val testGraph = generateGraph()
+
+    val nodeA: Node[String] = testGraph.contains("A").head
+    val nodeB: Node[String] = testGraph.contains("B").head
+    val nodeC: Node[String] = testGraph.contains("C").head
+
+    for(node <- testGraph.findPath(nodeB, nodeC)) {
+      print(node.data + " -> ")
+    }
+    println(nodeC.data)
   }
 
   def testToString() = {

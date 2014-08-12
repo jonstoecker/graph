@@ -1,6 +1,7 @@
 package stoecker
 
 import scala.collection.mutable
+import java.util.PriorityQueue
 
 /**
  * Created by jstoecker on 7/25/14.
@@ -210,6 +211,54 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    * @return reference to containing node; null if not found
    */
   def bfs(target: E): Node[E] = bfs(nodes.head, target)
+
+  /**
+   * Finds the shortest path between two nodes
+   * @param source starting point/source
+   * @param target destination
+   * @return list containing the shortest path between two nodes
+   */
+  def findPath(source: Node[E], target: Node[E]): List[Node[E]] = {
+    val path: mutable.ListBuffer[Node[E]] = new mutable.ListBuffer[Node[E]]
+    val previous: mutable.HashMap[Node[E], Node[E]] = new mutable.HashMap[Node[E], Node[E]]
+
+    def dijkstra() = {
+      val queue: java.util.PriorityQueue[Node[E]] = new java.util.PriorityQueue[Node[E]]()
+      source.id = 0 // Initial distance from origin to origin is 0
+      queue.add(source)
+
+      while (!queue.isEmpty) {
+        val current: Node[E] = queue.poll()
+
+        for (adjacent <- current.adjacent) {
+          val distance: Int = current.id + 1
+
+          if (distance < adjacent.id) {
+            queue.remove(adjacent)
+            adjacent.id = distance
+            previous.put(adjacent, current)
+            queue.add(adjacent)
+          }
+        }
+      }
+    }
+
+    // Initialize distance and previous node hashes
+    for (node <- nodes) {
+      node.id = Integer.MAX_VALUE
+      previous.put(node, null)
+    }
+
+    // Run Dijkstra's algorithm to find the shortest path to each node in the set
+    dijkstra()
+
+    var node = previous.getOrElse(target, null)
+    while(node != null) {
+      path.prepend(node)
+      node = previous.getOrElse(node, null)
+    }
+    path.toList
+  }
 
   /**
    * Generates a string representation of the graph
