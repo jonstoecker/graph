@@ -12,7 +12,8 @@ object Test {
 //    testAddNodeAndEdge()
 //    testIDDFS()
 //    testContains()
-    testRemoveEdge()
+//    testRemoveEdge()
+    testToString()
   }
 
   def generateGraph(): Graph[String] = {
@@ -181,6 +182,13 @@ object Test {
     println("Graph contains " + testString + " : " + testGraph.contains(testString))
     testGraph.addNode(testNode2)
     println("Graph contains " + testString + " : " + testGraph.contains(testString))
+  }
+
+  def testToString() = {
+    val testGraph = generateGraph()
+    println(testGraph.toString)
+    println(testGraph.toStringWithIds)
+    println(testGraph.toStringWithFeatures)
   }
 
 }

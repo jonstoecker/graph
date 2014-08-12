@@ -106,7 +106,6 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    * @param target data point to search for within the graph
    * @return option containing the appropriate node(s)
    */
-  // TODO evaluate an ordered and sorted set for binary search
   def contains(target: E) = nodes.find((node: Node[E]) => node.data.equals(target))
 
   /**
@@ -217,7 +216,61 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    * @return string representation of the graph
    */
   override def toString: String = {
-    // TODO
-    "todo"
+    val graphStr: mutable.StringBuilder = new mutable.StringBuilder()
+    graphStr.append("Graph information\n--\nVertices: ")
+      .append(nodes.size)
+      .append("\nEdges: ")
+      .append(edges / 2)
+      .append("\nAdjacencies: \n")
+    for (node <- nodes) {
+      graphStr.append(node.data).append(": ")
+      for (adj <- node.adjacent) {
+        graphStr.append(adj.data).append(" ")
+      }
+      graphStr.append("\n")
+    }
+    graphStr.toString()
+  }
+
+  /**
+   * Generates a string representation of the graph including each node's id value
+   * @return string representation of the graph
+   */
+  def toStringWithIds: String = {
+    val graphStr: mutable.StringBuilder = new mutable.StringBuilder()
+    graphStr.append("Graph information\n--\nVertices: ")
+      .append(nodes.size)
+      .append("\nEdges: ")
+      .append(edges / 2)
+      .append("\nAdjacencies: \n")
+    for (node <- nodes) {
+      graphStr.append(node.data).append(" (").append(node.id).append("): ")
+      for (adj <- node.adjacent) {
+        graphStr.append(adj.data).append(" (").append(adj.id).append(") ")
+      }
+      graphStr.append("\n")
+    }
+    graphStr.toString()
+  }
+
+  /**
+   * Generates a string representation of the graph including each node's feature value
+   * @return string representation of the graph
+   */
+  def toStringWithFeatures: String = {
+    val graphStr: mutable.StringBuilder = new mutable.StringBuilder()
+    graphStr.append("Graph information\n--\nVertices: ")
+      .append(nodes.size)
+      .append("\nEdges: ")
+      .append(edges / 2)
+      .append("\nAdjacencies: \n")
+    for (node <- nodes) {
+      graphStr.append(node.data).append(" (").append(node.feature).append("): ")
+      for (adj <- node.adjacent) {
+        graphStr.append(adj.data).append(" (").append(adj.feature).append(") ")
+      }
+      graphStr.append("\n")
+    }
+    graphStr.toString()
   }
 }
