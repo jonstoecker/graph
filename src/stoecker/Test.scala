@@ -8,10 +8,11 @@ object Test {
 
   // TODO clean up test cases/unit tests
   def main(args: Array[String]) {
-    testNode()
-    testAddNodeAndEdge()
+//    testNode()
+//    testAddNodeAndEdge()
 //    testIDDFS()
 //    testContains()
+    testRemoveEdge()
   }
 
   def generateGraph(): Graph[String] = {
@@ -64,26 +65,64 @@ object Test {
   def testNode() = {
     val testNode = new Node[String]("TestNode")
 
-    // Expected result: "-1" (default value for a node id)
-    println(testNode.toString + " id : " + testNode.id)
+    def testNodeValues(id: Int, data: String, feature: String) = {
+      println("Current (id): " + testNode.id)
+      println("Current (data): " + testNode.data)
+      println("Current (feature): " + testNode.feature)
+      println("Expected (id): " + id)
+      println("Expected (data): " + data)
+      println("Expected (feature): " + feature)
+      testNode.id = id
+      testNode.data = data
+      testNode.feature = feature
+      println("Actual (id): " + testNode.id)
+      println("Actual (data): " + testNode.data)
+      println("Actual (feature): " + testNode.feature)
+      if (testNode.id != id || testNode.data != data || testNode.feature != feature) println("Fail")
+      else println("\nSuccess\n")
+    }
 
-    // Expected result: "2"
-    testNode.id = 2
-    println(testNode.toString + " id : " + testNode.id)
+    testNodeValues(-1, "TestNodeChange", "f1")
+    testNodeValues(15, "TestNodeChange2", "f2")
+  }
 
-    // Expected result: "TestNode"
-    println(testNode.toString + " data: " + testNode.data)
+  /*
+  Test edge removal
+   */
+  def testRemoveEdge() = {
+    val testGraph = generateGraph()
+    def testRemoveEdge(n: Node[String], m: Node[String]) = {
+      println("Current")
+      println(n.data + "(" + n + ")" + " adjacent:")
+      for (node <- n.adjacent) println(node.data)
+      println()
+      println(m.data + "(" + m + ")" + " adjacent:")
+      for (node <- n.adjacent) println(node.data)
+      println("\n")
 
-    // Expected result: "TestNodeChanged"
-    testNode.data = "TestNodeChanged"
-    println(testNode.toString + " data: " + testNode.data)
+      println("After removal: ")
+      testGraph.removeEdge(n, m)
+      println(n.data + "(" + n + ")" + " adjacent:")
+      for (node <- n.adjacent) println(node.data)
+      println()
+      println(m.data + "(" + m + ")" + " adjacent:")
+      for (node <- n.adjacent) println(node.data)
+      println("\n")
+    }
+
+    val nodeA: Node[String] = testGraph.contains("A").head
+    val nodeB: Node[String] = testGraph.contains("B").head
+    testRemoveEdge(nodeA, nodeB)
+    testRemoveEdge(nodeA, nodeB)
+    testRemoveEdge(nodeA, nodeB)
+    testRemoveEdge(nodeA, nodeB)
   }
 
   /*
   Test depth-first search
    */
   def testBFS() = {
-
+    // TODO
   }
 
   /*

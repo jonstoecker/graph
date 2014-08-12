@@ -50,13 +50,20 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
   }
 
   /**
-   * Removes a two-way edge from the graph between the two specified nodes
+   * Removes a single edge between the two specified nodes
    * Currently undirected
-   * @param n "from" node
-   * @param m "to" node
+   * @param from "from" node
+   * @param to "to" node
    */
-  def removeEdge(n: Node[E], m: Node[E]) {
+  def removeEdge(from: Node[E], to: Node[E]) = {
     // TODO replace assumed undirected graph with digraph functionality
+    def getEdge(from: Node[E], to: Node[E]) =
+      from.adjacent.find((node: Node[E]) => node == to) match {
+        case Some(node) => node
+        case None => null
+      }
+    from.adjacent -= getEdge(from, to)
+    to.adjacent -= getEdge(to, from)
   }
 
   /**
@@ -97,7 +104,7 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    * Searches for a specified data value (currently iterative)
    * Running time: O(n)
    * @param target data point to search for within the graph
-   * @return collection containing the appropriate node(s)
+   * @return option containing the appropriate node(s)
    */
   // TODO evaluate an ordered and sorted set for binary search
   def contains(target: E) = nodes.find((node: Node[E]) => node.data.equals(target))
