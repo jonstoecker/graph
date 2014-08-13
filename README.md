@@ -49,6 +49,8 @@ dfs(target) :: depth-first search to find a given data value; randomized start
 
 dfs(start, target_val) :: depth-first search to find a given data value from a given start point
 
+findPath(start, destination) -> list(node) :: finds the shortest path between two vertices (dijkstra)
+
 iddfs(target_val) :: iterative deepening depth-first search
 
 iddfs(start, target_val) :: iddfs from a given start point

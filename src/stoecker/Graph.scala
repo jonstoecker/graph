@@ -214,6 +214,7 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
 
   /**
    * Finds the shortest path between two nodes
+   * Running time: O(|Edges| + |Vertices| * log(|Vertices|))
    * @param source starting point/source
    * @param target destination
    * @return list containing the shortest path between two nodes
