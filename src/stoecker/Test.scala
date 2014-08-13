@@ -9,12 +9,12 @@ object Test {
   // TODO clean up test cases/unit tests
   def main(args: Array[String]) {
 //    testNode()
-//    testAddNodeAndEdge()
+    testAddNodeAndEdge()
 //    testIDDFS()
 //    testContains()
 //    testRemoveEdge()
 //    testToString()
-    testFindPath()
+//    testFindPath()
   }
 
   def generateGraph(): Graph[String] = {
@@ -38,27 +38,46 @@ object Test {
 
     val testGraph: Graph[String] = new Graph[String]
 
+    // Solitary node cases
     println("Testing AddNode\n--")
-    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+
+    println(testGraph.toString)
+
     println("Adding A")
     val nodeA = new Node[String]("A")
     testGraph.addNode(nodeA)
-    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println(testGraph.toString)
+
     println("Adding B")
     val nodeB = new Node[String]("B")
     testGraph.addNode(nodeB)
-    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println(testGraph.toString)
+
     println("Adding C")
     val nodeC = new Node[String]("C")
     testGraph.addNode(nodeC)
-    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println(testGraph.toString)
 
+    // Solitary edge cases
     println("Adding edge from A to B")
     testGraph.addEdge(nodeA, nodeB)
-    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println(testGraph.toString)
+
     println("Adding edge from A to C")
     testGraph.addEdge(nodeA, nodeC)
-    println("Vertices: " + testGraph.vertices + " Edges: " + testGraph.edges)
+    println(testGraph.toString)
+
+    // Multiple node (i.e. discrete component) cases
+    println("Adding discrete component (existing) -> D <-> E <-> F")
+    val nodeD = new Node[String]("D")
+    val nodeE = new Node[String]("E")
+    val nodeF = new Node[String]("F")
+    nodeD.adjacent.append(nodeE)
+    nodeE.adjacent.append(nodeD)
+    nodeE.adjacent.append(nodeF)
+    nodeF.adjacent.append(nodeE)
+    testGraph.addNode(nodeD)
+    println(testGraph.toString)
   }
 
   /*

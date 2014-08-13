@@ -12,27 +12,22 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
   def this() = this(new mutable.HashSet[Node[E]])
 
   private val nodes: mutable.HashSet[Node[E]] = nodesIn
-  private var numEdges: Int = sumEdges(nodes.toList)
+  private var numEdges: Int = sumEdges
   private val DEBUG: Boolean = true
 
-  private def sumEdges(set: List[Node[E]]): Int = set.foldLeft(0)((sum, curr) => sum + curr.adjacent.size)
+  /**
+   * Computes the sum total of all adjacencies contained within the graph
+   * @return sum total of all adjacencies contained within the graph
+   */
+  private def sumEdges = nodes.foldLeft(0)((sum, curr) => sum + curr.adjacent.size)
 
   /**
-   * Adds the provided node to the graph
+   * Adds the provided node and all associated adjacencies to the graph
    * @param node node to add the graph
    */
   def addNode(node: Node[E]) {
-    // TODO add proper case handling for nodes with pre-existing edges
-    // 1.) Check for adjacent nodes
-    // If true:
-    // 2.) Traverse the new graph component and construct a set
-    // 3.) Replace the existing node set with the union of the two sets
-    // 4.) Recalculate the sum of edges
-    if (node.adjacent.size == 0) {
-      nodes.add(node)
-    } else {
-      // TODO
-    }
+    findNewNodesFrom(node)
+    numEdges = sumEdges
   }
 
   /**
@@ -161,8 +156,11 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
     def deepeningSearch(maxDepth: Int): Node[E] = {
       val visited = new mutable.HashSet[Node[E]]
       val result = dfs(n, target, 0, maxDepth, visited, isIterativeDeepening = true)
-      // TODO address discontinuous component case for terminating iterative deepening search
-      // depth is arbitrarily limited to signed int maximum (i.e. 2^31 - 1)
+      // TODO address discrete component case for terminating iterative deepening search
+      // TODO current termination condition naively assumes that the graph's vertex set will match any potential
+      // TODO traversal
+      // depth is arbitrarily limited to signed int maximum (i.e. 2^31 - 1); in practical terms, IDDFS would become
+      // prohibitively inefficient well before reaching this limit
       if (result == null && visited.size < nodes.size && maxDepth < Integer.MAX_VALUE) return deepeningSearch(maxDepth + 1)
       result
     }
@@ -185,8 +183,8 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
    */
   def bfs(n: Node[E], target: E): Node[E] = {
 
+    val visited: mutable.HashSet[Node[E]] = new mutable.HashSet[Node[E]]()
     val queue: mutable.ListBuffer[Node[E]] = new mutable.ListBuffer[Node[E]]
-    val visited: mutable.HashSet[Node[E]] = new mutable.HashSet[Node[E]]
     queue.append(n)
     visited.add(n)
 
@@ -224,6 +222,7 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
     val previous: mutable.HashMap[Node[E], Node[E]] = new mutable.HashMap[Node[E], Node[E]]
 
     def dijkstra() = {
+      // Using the Java std lib priority queue for functional reasons
       val queue: java.util.PriorityQueue[Node[E]] = new java.util.PriorityQueue[Node[E]]()
       source.id = 0 // Initial distance from origin to origin is 0
       queue.add(source)
@@ -262,6 +261,28 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
   }
 
   /**
+   *  Traverses edges from a given start point, in order to find and add nodes to the
+   *  set maintained by the graph proper (e.g. adding a discrete graph component via addNode)
+   *  Uses BFS algorithm
+   *  Running time: O(|Edges|)
+   *  @param start starting point for the traversal
+   */
+  private def findNewNodesFrom(start: Node[E]) = {
+
+    val queue: mutable.Queue[Node[E]] = new mutable.Queue[Node[E]]
+    queue.enqueue(start)
+    nodes.add(start)
+
+    while (queue.nonEmpty) {
+      val current: Node[E] = queue.dequeue()
+      for (node <- current.adjacent if !nodes.contains(node)) {
+        nodes.add(node)
+        queue.enqueue(node)
+      }
+    }
+  }
+
+  /**
    * Generates a string representation of the graph
    * @return string representation of the graph
    */
@@ -270,7 +291,7 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
     graphStr.append("Graph information\n--\nVertices: ")
       .append(nodes.size)
       .append("\nEdges: ")
-      .append(edges / 2)
+      .append(edges)
       .append("\nAdjacencies: \n")
     for (node <- nodes) {
       graphStr.append(node.data).append(": ")
@@ -291,7 +312,7 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
     graphStr.append("Graph information\n--\nVertices: ")
       .append(nodes.size)
       .append("\nEdges: ")
-      .append(edges / 2)
+      .append(edges)
       .append("\nAdjacencies: \n")
     for (node <- nodes) {
       graphStr.append(node.data).append(" (").append(node.id).append("): ")
@@ -312,7 +333,7 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
     graphStr.append("Graph information\n--\nVertices: ")
       .append(nodes.size)
       .append("\nEdges: ")
-      .append(edges / 2)
+      .append(edges)
       .append("\nAdjacencies: \n")
     for (node <- nodes) {
       graphStr.append(node.data).append(" (").append(node.feature).append("): ")
