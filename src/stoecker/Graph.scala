@@ -184,19 +184,19 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
   def bfs(n: Node[E], target: E): Node[E] = {
 
     val visited: mutable.HashSet[Node[E]] = new mutable.HashSet[Node[E]]()
-    val queue: mutable.ListBuffer[Node[E]] = new mutable.ListBuffer[Node[E]]
-    queue.append(n)
+    val queue: mutable.Queue[Node[E]] = new mutable.Queue[Node[E]]
+    queue.enqueue(n)
     visited.add(n)
 
     while (queue.nonEmpty) {
 
-      val current: Node[E] = queue.remove(0)
+      val current: Node[E] = queue.dequeue()
       if (DEBUG) println("Found " + current.data + " while visiting " + current.toString)
       if (current.data.equals(target)) return current
 
       for (node <- current.adjacent if !visited.contains(node)) {
         visited.add(node)
-        queue.append(node)
+        queue.enqueue(node)
       }
     }
     null
@@ -230,8 +230,9 @@ class Graph[E](nodesIn: mutable.HashSet[Node[E]]) {
       while (!queue.isEmpty) {
         val current: Node[E] = queue.poll()
 
+
         for (adjacent <- current.adjacent) {
-          val distance: Int = current.id + 1
+          val distance: Int = current.id + 1  // TODO update to handle weighting
 
           if (distance < adjacent.id) {
             queue.remove(adjacent)
