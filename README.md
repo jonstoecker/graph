@@ -58,3 +58,7 @@ iddfs(start, target_val) :: iddfs from a given start point
 Utility methods
 --
 toString :: pretty print string representation of the graph
+
+toStringWithIds :: as above, but with each node's id value shown
+
+toStringWithFeatures ::  as above, but with each node's feature value shown
